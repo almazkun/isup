@@ -11,17 +11,16 @@ class TestClient(TestCase):
     def test_client_get(self):
         url = self.test_get_url
         r = Client.get(url)
-        assert r.getcode() == 200
-        assert r.geturl() == url
-        assert r.read().decode("utf-8") == ""
+        self.assertEqual(r.getcode(), 200)
+        self.assertEqual(r.geturl(), url)
+        self.assertEqual(r.read().decode("utf-8"), "")
 
     def test_client_post(self):
         url = self.test_post_url
         r = Client.post(url, {"test": "test"})
-        assert r.getcode() == 200
-        assert r.geturl() == url
-        assert r.read().decode("utf-8") == ""
-
+        self.assertEqual(r.getcode(), 200)
+        self.assertEqual(r.geturl(), url)
+        self.assertEqual(r.read().decode("utf-8"), "")
 
 class TestGithubClient(TestCase):
     GITHUB_TOKEN = "test_token"
@@ -31,7 +30,7 @@ class TestGithubClient(TestCase):
         url = self.test_url
         with self.assertRaises(urllib.error.HTTPError) as e:
             GithubClient.get(url, self.GITHUB_TOKEN)
-            assert e.exception.code == 401
+            self.assertEqual(e.exception.code, 401)
 
     def test_github_client_post(self):
         url = self.test_url
@@ -39,4 +38,4 @@ class TestGithubClient(TestCase):
         data = {"test": "test"}
         with self.assertRaises(urllib.error.HTTPError) as e:
             GithubClient.post(url, token, data)
-            assert e.exception.code == 401
+            self.assertEqual(e.exception.code, 401)

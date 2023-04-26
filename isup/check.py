@@ -1,11 +1,12 @@
 import asyncio
 import concurrent.futures
-from datetime import datetime
 import logging
 import os
 import urllib.request
-from isup.client import Client
+from datetime import datetime
 from typing import Union
+
+from isup.client import Client
 
 logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
 logger = logging.getLogger(__name__)
@@ -39,16 +40,16 @@ def write_to_file(
         f.write(f"{url},{status},{expected_status},{elapsed}\n")
 
 
-def isup(url_expected_status: str) -> None:
-    url, expected_status = url_expected_status.split("->")
-    status, elapsed = get(url)
-    write_to_file(".github/workflows/results/", url, status, expected_status, elapsed)
-    logger.debug(f"isup(): {url} {status} {expected_status} {elapsed}")
+def check_save(path_to: str, url: str, expected_status: int = 200) -> None:
+    logger.debug(f"check_save(): {url} {expected_status}")
+    status, elapsed = check_url(url)
+    write_to_file(path_to, url, status, expected_status, elapsed)
 
 
 async def all_urls(urls: list, executor: concurrent.futures.ThreadPoolExecutor) -> None:
     loop = asyncio.get_event_loop()
-    await asyncio.gather(*[loop.run_in_executor(executor, isup, url) for url in urls])
+    func = lambda url: check_save(os.environ.get("PATH_TO_SAVE", "/tmp/"), url, 200)
+    await asyncio.gather(*[loop.run_in_executor(executor, func, url) for url in urls])
 
 
 def main() -> None:

@@ -1,5 +1,7 @@
 from unittest import TestCase
+
 from isup import check
+
 
 class TestCheck(TestCase):
     url = "https://akun.dev"
