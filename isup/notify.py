@@ -1,12 +1,11 @@
 import asyncio
 import concurrent.futures
-import json
 import logging
 import os
 
 from isup.client import GithubClient
 
-logging.basicConfig(level=os.environ.get("LOG_LEVEL", "INFO"))
+logging.basicConfig(level=os.environ.get("LOG_LEVEL", "DEBUG"))
 logger = logging.getLogger(__name__)
 
 GITHUB_REPOSITORY = os.environ.get("GITHUB_REPOSITORY")
@@ -28,9 +27,7 @@ def get_issue_list(
     repo: str = GITHUB_REPO,
     token: str = GITHUB_TOKEN,
 ) -> list:
-    return json.loads(
-        GithubClient.get(f"https://api.github.com/repos/{owner}/{repo}/issues", token),
-    )
+    return GithubClient.get(f"https://api.github.com/repos/{owner}/{repo}/issues", token)
 
 
 def create_issue(
