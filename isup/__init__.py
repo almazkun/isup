@@ -1,16 +1,35 @@
-def write_to_file(
-    path_to: str,
-    url: str,
-    status: int,
-    expected_status: int,
-    elapsed: float,
-) -> None:
-    file_name = url.split("/")[-1]
-    with open(path_to + file_name, "a+") as f:
-        f.write(f"{url},{status},{expected_status},{elapsed}\n")
+import argparse
+import logging
+import os
+import sys
+
+logging.basicConfig(level=os.environ.get("LOG_LEVEL", "DEBUG"))
 
 
-def check_save(path_to: str, url: str, expected_status: int = 200) -> None:
-    logger.debug(f"check_save(): {url} {expected_status}")
-    status, elapsed = check_url(url)
-    write_to_file(path_to, url, status, expected_status, elapsed)
+def check(args):
+    from .check import check_list
+
+    print(check_list(args.url_list))
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="down-issue: if down(url): create_issue(github)"
+    )
+
+    subparsers = parser.add_subparsers(help="sub-command help")
+
+    parser_check = subparsers.add_parser("check", help="check help")
+    parser_check.add_argument("-u", "--url-list", nargs="+", help="url list to check")
+    parser_check.set_defaults(func=check)
+
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit()
+
+    args = parser.parse_args()
+    args.func(args)
+
+
+if __name__ == "__main__":
+    main()

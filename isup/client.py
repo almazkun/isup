@@ -4,9 +4,9 @@ import urllib.request
 
 class Client:
     @classmethod
-    def get(cls, url: str, **kwargs) -> dict:
+    def get(cls, url: str, timeout: int = 10, **kwargs) -> dict:
         req = urllib.request.Request(url, **kwargs)
-        with urllib.request.urlopen(req, timeout=10) as res:
+        with urllib.request.urlopen(req, timeout=timeout) as res:
             return res
 
     @classmethod
@@ -51,3 +51,13 @@ class GithubClient(Client):
             .read()
             .decode("utf-8")
         )
+
+    @classmethod
+    def issue_list(cls, owner: str, repo: str, token: str) -> dict:
+        url = f"https://api.github.com/repos/{owner}/{repo}/issues"
+        return cls.get(url, token)
+
+    @classmethod
+    def create_issue(cls, owner: str, repo: str, token: str, data: dict) -> dict:
+        url = f"https://api.github.com/repos/{owner}/{repo}/issues"
+        return cls.post(url, token, data)

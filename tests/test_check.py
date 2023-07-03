@@ -1,7 +1,7 @@
 from unittest import TestCase
 
-from isup import check
-from isup import notify
+from isup import check, notify
+
 
 class TestCheck(TestCase):
     url = "https://akun.dev"
@@ -35,7 +35,7 @@ class TestCheck(TestCase):
     def test_check_list(self):
         url_list = [self.url + f"/?i={i}" for i in range(10)]
         l = check.check_list(url_list)
-        
+
         self.assertEqual(len(l), len(url_list))
         self.assertEqual(l[0][0], self.expected_status)
         self.assertGreater(l[0][1], 0)
@@ -49,6 +49,8 @@ class TestNotify(TestCase):
             "Test issue body",
         )
         issue_list = notify.get_issue_list()
-        print (issue_list)
-        print (issue)
-        self.assertTrue(any(issue.get("title", None) == "Test issue" for issue in issue_list))
+        print(issue_list)
+        print(issue)
+        self.assertTrue(
+            any(issue.get("title", None) == "Test issue" for issue in issue_list)
+        )

@@ -6,6 +6,9 @@ name = "pypi"
 [packages]
 
 [dev-packages]
+isort = "*"
+autoflake = "*"
+black = "*"
 
 [requires]
 python_version = "3.11"
