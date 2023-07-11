@@ -1,5 +1,3 @@
-import asyncio
-import concurrent.futures
 import logging
 import os
 
@@ -40,13 +38,6 @@ def create_issue(
     )
 
 
-def should_notify(status: int, expected_status: int, issue_title: str) -> bool:
-    if status != expected_status:
-        issue_list = get_issue_list()
-        return not already_notified(issue_list, issue_title)
-    return False
-
-
 def already_notified(issue_list: list, issue_title: str) -> bool:
     return any(issue_title in issue.get("title", None) for issue in issue_list)
 
@@ -57,12 +48,19 @@ def notify(
     expected_status: int = 200,
     issue_title_pattern: str = ISSUE_TITLE_PATTERN,
 ) -> None:
-    logger.info(f"notify(): Notifying for {url} with status {status}")
-    issue_title = issue_title_pattern % url
-    if should_notify(status, expected_status, issue_title):
-        logger.info(f"Creating issue for {url} with status {status}")
-        issue_body = ISSUE_BODY_PATTERN % (url, status, expected_status)
-        create_issue(issue_title, issue_body)
+    logger.info(f"notify: {url} {status} {expected_status}")
+    
+    if status != expected_status:
+        issue_title = issue_title_pattern % url
+        issue_list = get_issue_list()
+        if already_notified(issue_list, issue_title):
+            logger.info(f"Creating issue for {url} with status {status}")
+            issue_body = ISSUE_BODY_PATTERN % (url, status, expected_status)
+            create_issue(issue_title, issue_body)
+        else:
+            logger.info(f"Already notified for {url} with status {status}")
+    else:
+        logger.info(f"Status {status} for {url} is OK!")
 
 
 if __name__ == "__main__":

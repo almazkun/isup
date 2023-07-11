@@ -1,8 +1,7 @@
-import os
 import urllib.error
 from unittest import TestCase
 
-from isup.client import Client, GithubClient
+from isup.client import GithubClient
 
 
 class TestGithubClient(TestCase):

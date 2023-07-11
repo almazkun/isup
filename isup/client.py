@@ -6,16 +6,14 @@ class Client:
     @classmethod
     def get(cls, url: str, timeout: int = 10, **kwargs) -> dict:
         req = urllib.request.Request(url, **kwargs)
-        with urllib.request.urlopen(req, timeout=timeout) as res:
-            return res
+        return urllib.request.urlopen(req, timeout=timeout)
 
     @classmethod
-    def post(cls, url: str, data: dict, **kwargs) -> dict:
+    def post(cls, url: str, data: dict, timeout: int = 10, **kwargs) -> dict:
         req = urllib.request.Request(
             url, data=json.dumps(data).encode("utf-8"), **kwargs
         )
-        with urllib.request.urlopen(req, timeout=10) as res:
-            return res
+        return urllib.request.urlopen(req, timeout=timeout)
 
 
 class GithubClient(Client):
